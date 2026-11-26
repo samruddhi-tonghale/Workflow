@@ -8,8 +8,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import urlparse
 
-ROOT = Path(__file__).resolve().parent
-WEB = ROOT / "web"
+ROOT = Path(__file__).resolve().parent.parent
+WEB = ROOT / "frontend"
 DB = ROOT / "workflow.db"
 
 
@@ -32,8 +32,13 @@ def init_db():
             owner TEXT DEFAULT 'You', created_at TEXT NOT NULL, updated_at TEXT NOT NULL,
             deleted INTEGER NOT NULL DEFAULT 0
         )""")
-
-
+        row = db.execute("SELECT * FROM workflows WHERE deleted=0 ORDER BY updated_at DESC LIMIT 1").fetchone()
+        if row and row["name"] == "Customer Support Triage":
+            db.execute("UPDATE workflows SET name=?, description=?, domain='', updated_at=? WHERE id=?", ("Workflow", "Routes requests to active experts and uses the LLM fallback when no expert matches.", now(), row["id"]))
+            row = db.execute("SELECT * FROM workflows WHERE id=?", (row["id"],)).fetchone()
+        if not row:
+            stamp = now()
+            db.execute("INSERT INTO workflows(id,name,description,domain,status,graph,settings,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?)", (str(uuid.uuid4()), "Workflow", "Routes requests to active experts and uses the LLM fallback when no expert matches.", "", "Draft", json.dumps(default_graph()), json.dumps(default_settings()), stamp, stamp))
 def row_data(row):
     item = dict(row)
     item["graph"] = json.loads(item["graph"])
@@ -132,6 +137,9 @@ class Handler(BaseHTTPRequestHandler):
                 return self.send_json(400, {"error": "Name must be between 3 and 60 characters."})
             wid, stamp = str(uuid.uuid4()), now()
             with connect() as db:
+                existing = db.execute("SELECT id FROM workflows WHERE deleted=0 LIMIT 1").fetchone()
+                if existing:
+                    return self.send_json(409, {"error": "This workspace has one workflow. Open and edit the existing workflow instead."})
                 try:
                     db.execute("INSERT INTO workflows(id,name,description,domain,status,graph,settings,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?)", (wid, name, payload.get("description", ""), payload.get("domain", ""), "Draft", json.dumps(default_graph()), json.dumps(default_settings()), stamp, stamp))
                 except sqlite3.IntegrityError:
@@ -197,6 +205,7 @@ if __name__ == "__main__":
     init_db()
     print("Workflow Module running at http://127.0.0.1:8000")
     ThreadingHTTPServer(("127.0.0.1", 8000), Handler).serve_forever()
+
 
 
 
