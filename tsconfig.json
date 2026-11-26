@@ -6,8 +6,8 @@
     "strict": false,
     "skipLibCheck": true,
     "noEmitOnError": true,
-    "rootDir": "frontend",
-    "outDir": "frontend"
+    "rootDir": "workflow-module/frontend",
+    "outDir": "workflow-module/frontend"
   },
-  "files": ["frontend/app.ts"]
+  "files": ["workflow-module/frontend/app.ts"]
 }
