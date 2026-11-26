@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Workflow Studio</title><link rel="stylesheet" href="/styles.css"></head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="brand"><div class="brand-mark">✦</div><span>MorningMind ORK</span></div>
+    <div class="workspace-switch"><span class="workspace-icon">W</span><span><b>Workflow Studio</b><small>Workspace</small></span><span class="chevron">⌄</span></div>
+    <div class="nav-label">BUILD</div>
+    <nav><a href="#" data-page="overview" class="nav-item"><span>◫</span>Overview</a><a href="#" data-page="orchestrator" class="nav-item"><span>◎</span>Orchestrator <i class="nav-state">External</i></a><a href="#" data-page="workflows" class="nav-item active"><span>⌘</span>Workflows</a><a href="#" data-page="experts" class="nav-item"><span>✦</span>Experts <i class="nav-state">External</i></a></nav>
+    <div class="nav-label lower">MANAGE</div><nav><a href="#" data-page="team" class="nav-item"><span>♙</span>Team</a><a href="#" data-page="settings" class="nav-item"><span>⚙</span>Settings</a></nav>
+    <div class="sidebar-bottom"><div class="integration-card"><div class="integration-title"><span class="pulse"></span> Integrations</div><p>Orchestrator and Experts modules are not connected yet.</p><button id="integrationDetails" class="text-button">View integration points <span>↗</span></button></div><div class="user-card"><div class="avatar">JD</div><span><b>Jordan Davis</b><small>Workflow builder</small></span><span class="chevron">···</span></div></div>
+  </aside>
+  <main class="main" id="mainView"></main>
+</div>
+<div id="toast" class="toast"></div>
+<dialog id="createDialog"><form method="dialog" id="createForm"><div class="dialog-head"><div><div class="eyebrow">NEW WORKFLOW</div><h2>Create a workflow</h2><p>Start with the standard request-to-response flow.</p></div><button class="icon-button" value="cancel" aria-label="Close">×</button></div><label>Workflow name <span class="required">*</span><input name="name" minlength="3" maxlength="60" placeholder="e.g. Customer support triage" required></label><label>Description <span class="muted">Optional</span><textarea name="description" rows="3" placeholder="What should this workflow do?"></textarea></label><label>Use case or domain <span class="muted">Optional</span><input name="domain" placeholder="e.g. Customer support"></label><div class="dialog-actions"><button class="button secondary" value="cancel">Cancel</button><button class="button primary" id="createSubmit" value="default">Create workflow <span>→</span></button></div></form></dialog>
+<script src="/app.js"></script>
+</body></html>
+
+
